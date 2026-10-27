@@ -31,7 +31,7 @@ jobs:
     - name: Attach to GitHub Release (only on tag)
       uses: softprops/action-gh-release@v3
       with:
-        files: mdns_example.zip
+        files: mdns_example-win.zip
 
   build-ubuntu:
     runs-on: ubuntu-latest
@@ -52,12 +52,12 @@ jobs:
       with:
         if-no-files-found: error
         name: mdns_example-ubuntu
-        path: bin/mdns_example
+        path: _build/bin/mdns_example
 
     - name: Attach to GitHub Release (only on tag)
       uses: softprops/action-gh-release@v3
       with:
-        files: mdns_example.zip
+        files: mdns_example-ubuntu.zip
 
   build-macos:
     runs-on: macos-latest
@@ -78,9 +78,9 @@ jobs:
       with:
         if-no-files-found: error
         name: mdns_example-macos
-        path: bin/mdns_example
+        path: _build/bin/mdns_example
 
     - name: Attach to GitHub Release (only on tag)
       uses: softprops/action-gh-release@v3
       with:
-        files: mdns_example.zip
+        files: mdns_example-macos.zip
