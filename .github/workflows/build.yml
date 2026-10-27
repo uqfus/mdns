@@ -1,10 +1,6 @@
 name: build
 
-permissions:
-  contents: write
-
 on:
-  workflow_dispatch:
   push:
     tags:
       - 'v*'
@@ -28,13 +24,8 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         if-no-files-found: error
-        name: mdns_example-win
+        name: mdns_example-windows.zip
         path: _build/bin/Release/mdns_example.exe
-
-    - name: Attach to GitHub Release (only on tag)
-      uses: softprops/action-gh-release@v3
-      with:
-        files: mdns_example-win
 
   build-ubuntu:
     runs-on: ubuntu-latest
@@ -54,13 +45,8 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         if-no-files-found: error
-        name: mdns_example-ubuntu
+        name: mdns_example-ubuntu.zip
         path: _build/bin/mdns_example
-
-    - name: Attach to GitHub Release (only on tag)
-      uses: softprops/action-gh-release@v3
-      with:
-        files: mdns_example-ubuntu
 
   build-macos:
     runs-on: macos-latest
@@ -80,10 +66,27 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         if-no-files-found: error
-        name: mdns_example-macos
+        name: mdns_example-macos.zip
         path: _build/bin/mdns_example
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-windows, build-ubuntu, build-macos]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v8
+      with:
+        skip-decompress: true
 
     - name: Attach to GitHub Release (only on tag)
       uses: softprops/action-gh-release@v3
       with:
-        files: mdns_example-macos
+        generate_release_notes: true
+        files: |
+          mdns_example-windows.zip
+          mdns_example-macos.zip
+          mdns_example-ubuntu.zip
