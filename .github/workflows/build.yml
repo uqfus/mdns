@@ -1,0 +1,86 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Configure
+      run: cmake -B _build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build _build --config Release --verbose
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        if-no-files-found: error
+        name: mdns_example-win
+        path: _build/bin/Release/mdns_example.exe
+
+    - name: Attach to GitHub Release (only on tag)
+      uses: softprops/action-gh-release@v3
+      with:
+        files: mdns_example.zip
+
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Configure
+      run: cmake -B _build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build _build --config Release --verbose
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        if-no-files-found: error
+        name: mdns_example-ubuntu
+        path: bin/mdns_example
+
+    - name: Attach to GitHub Release (only on tag)
+      uses: softprops/action-gh-release@v3
+      with:
+        files: mdns_example.zip
+
+  build-macos:
+    runs-on: macos-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Configure
+      run: cmake -B _build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --build _build --config Release --verbose
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        if-no-files-found: error
+        name: mdns_example-macos
+        path: bin/mdns_example
+
+    - name: Attach to GitHub Release (only on tag)
+      uses: softprops/action-gh-release@v3
+      with:
+        files: mdns_example.zip
